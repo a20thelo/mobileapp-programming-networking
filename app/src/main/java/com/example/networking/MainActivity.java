@@ -60,15 +60,26 @@ public class MainActivity extends AppCompatActivity {
 
         ListView myListView = findViewById(R.id.listView);
         myListView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Här visar jag genom adapter. andra properties ex höjd osv
-                Toast.makeText(MainActivity.this, "Hittade berg!" + adapter.getItem(position), Toast.LENGTH_SHORT).show();
-                Log.d("DATA", "Hittade berg i log.d" + adapter.getItem(position));
+                String name = arrayMountain.get(position).getName("name");
+                String type = arrayMountain.get(position).getType("type");
+                String location = arrayMountain.get(position).getLocation("location");
+                String sentece = name + " <<<< " + type + "<<<<< " +location ;
+
+
+                Toast.makeText(MainActivity.this, sentece, Toast.LENGTH_SHORT).show();
+                //Log.d("DATA", "Hittade berg i log.d" + adapter.getItem(position));
             }
         });
+
+
+
+
+
 
         new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
 
