@@ -30,9 +30,9 @@ import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
-    private Mountain[] mountains={new Mountain()};
-    private ArrayList < Mountain> arrayMountain;
-    private ArrayAdapter <Mountain> adapter;
+    private ArrayList<Mountain> arrayMountain;
+    private ArrayAdapter<Mountain> adapter;
+
     @SuppressWarnings("SameParameterValue")
     private String readFile(String fileName) {
         try {
@@ -48,18 +48,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
+
 
         String s = readFile("mountains.json");
-        Log.d("DATA","The following text was found in textfile:\n\n"+s);
+       // Log.d("DATA", "The following text was found in textfile:\n\n" + s);
 
 
-        for(int i=0; i<mountains.length; i++){
-            Log.d("MainActivity DATA>","Hittade ett berg:"+i);
+        arrayMountain = new ArrayList<>();
+        adapter = new ArrayAdapter<>(MainActivity.this, R.layout.listitem, R.id.listitem1, arrayMountain);
 
 
+        ListView myListView = findViewById(R.id.listView);
+        myListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Här visar jag genom adapter. andra properties ex höjd osv
+                Toast.makeText(MainActivity.this, "Hittade berg!" + adapter.getItem(position), Toast.LENGTH_SHORT).show();
+                Log.d("DATA", "Hittade berg i log.d" + adapter.getItem(position));
+            }
+        });
 
-        }
+        new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
+
+        // for(int i=0; i<mountains.length; i++){
+        // Log.d("DATA>","Hittade ett berg:"+i);
+
+
+        // }
 
 
     }
@@ -107,23 +124,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String json) {
             Log.d("DATA", json);
-            Gson gson=new Gson();
-            mountains=gson.fromJson(json,Mountain[].class);
-            arrayMountain=new ArrayList<>();
-            adapter=new ArrayAdapter<>(MainActivity.this,R.layout.listitem,R.id.listitem1,mountains);
+
+            Gson gson = new Gson();
+            Mountain[] tempmountains = gson.fromJson(json, Mountain[].class);
+
+            for (int i = 0; i <tempmountains.length; i++) {
+                Mountain m = tempmountains[i];
+                Log.d("DATA", m.toString());
 
 
-            ListView myListView=findViewById(R.id.listView);
-            myListView.setAdapter(adapter);
+                arrayMountain.add(m);
+
+            }
+
             adapter.notifyDataSetChanged();
-            myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(MainActivity.this, "Hittade berg!" + mountains[position],  Toast.LENGTH_SHORT).show();
-                    Log.d("DATA", "Hittade berg"+ mountains[position]);
-                }
-            });
-        }
-    }
 
+        }
+
+    }
 }
