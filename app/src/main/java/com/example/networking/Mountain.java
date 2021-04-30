@@ -17,25 +17,27 @@ public class Mountain {
 
     private Auxdata auxdata;
 
+
     public Mountain(String name,String type,String location){
         this.name = name;
         this.type = type;
         this.location= location;
     }
 
-    public String getName( String name) {
+    public String getName() {
         return name;
     }
 
-    public String getType( String type) {
+    public String getType() {
         return type;
     }
 
-    public String getLocation(String location) {
+    public String getLocation() {
         return location;
     }
 
-    public String toString(){
+    public String toString() {
         return name;
     }
+
 }
