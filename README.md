@@ -1,42 +1,76 @@
 
-# Rapport
+# Rapport för inlämning 6
 
-**Skriv din rapport här!**
+**Networking**
 
-_Du kan ta bort all text som finns sedan tidigare_.
-
-## Följande grundsyn gäller dugga-svar:
-
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
-
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
-
+- Add a `ListView` to your layout
+En ListView lades till i xml layoutfilen activity_main. Koden som användes var denna:
 ```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Hello!">
+    </ListView>
+```
+
+- Add a `ArrayList<Mountain>` as a member variable in your activity, Add a `ArrayAdapter<Mountain>` as a member variable in your activity
+I java klassen MainActivity lades en ArrayList<Mountain> och en ArrayAdapter<Mountain>. Det gjordes genom genom att lägga in detta kodstycket:
+```
+ private ArrayList<Mountain> arrayMountain;
+ private ArrayAdapter<Mountain> adapter;
+```
+
+- Use `JsonTask` to fetch data from our json web service
+Koden för `JsonTask` hämtades från lenasys. Den lades till utanför alla metoder, nedanför onCreate i MainActivity. Datan fanns representerad i en länk som likaså hittades på lenasys. 
+Datan lästes in genom att addera följande kod inuti metoden onCreate:`new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");`
+
+- Add items to your list of mountains by parsing the json data Hint: use `adapter.notifyDataSetChanged();` from within `onPostExecute(String json)` to notify the adapter that the content of the ArrayList has been updated.
+Ett bibliotek skulle läggas in för att kunna läsa av gson data. Det gjordes genom file -> project structure -> dependencies -> app.
+När detta gjordes kunde biblioteket synas längst upp bland importerade filer i MainActivity.`import com.google.gson.Gson;`
+ Genom att lägga till `adapter.notifyDataSetChanged();` i metoden onPostExecute kunde uppdatateringar av arraylisten uppmärksammas och ny data kunde föras in. 
+ ```
+@Override
+        protected void onPostExecute(String json) {
+            Log.d("DATA", json);
+
+            Gson gson = new Gson();
+            Mountain[] tempmountains = gson.fromJson(json, Mountain[].class);
+
+            for (int i = 0; i <tempmountains.length; i++) {
+                Mountain m = tempmountains[i];
+                Log.d("DATA", m.toString());
+
+
+                arrayMountain.add(m);
+
+            }
+
+            adapter.notifyDataSetChanged();
+
+        }
+```
+
+- Display the names of the mountains in the `ListView` Hint: override `toString()` in your Mountain class samt Display Mountain name and 2 other properties as a Toast View.                                                                                                      
+Genom att lägga till kodstycket nedanför möjliggjordes det för appen att hämta hem bergens namn:
+```
+  public String toString() {
+        return name;
     }
-}
+```
+För att sen kunna skriva ut datan som innehöll olika properties för bergen bland annat namn behöves detta kodstycket i metoden onItemClick:
+```
+public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //Här visar jag genom adapter. andra properties ex höjd osv
+                    String name = arrayMountain.get(position).getName();
+                    String type = arrayMountain.get(position).getType();
+                    String location = arrayMountain.get(position).getLocation();
+                    String sentence = name + " <<<< " + type + "<<<<< " +location ;
 ```
 
-Bilder läggs i samma mapp som markdown-filen.
 
-![](android.png)
 
-Läs gärna:
 
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
+![](bild1.png)
+![](bild2.png)
+![](bild3.png)
