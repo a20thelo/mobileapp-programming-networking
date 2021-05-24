@@ -73,4 +73,9 @@ public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 
 ![](bild1.png)
 ![](bild2.png)
+![](bild3.png)
 ![](bild4.png)
+
+
+**OBS Bild 4 är den aktuella bilden på toasten, min dator är så seg så jag får tyvärr inte till en bättre screenshot**
+
